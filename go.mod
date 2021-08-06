@@ -11,11 +11,13 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/json-iterator/go v1.1.11
 	github.com/pkg/errors v0.9.1
+	github.com/rjeczalik/notify v0.9.2
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/stretchr/testify v1.7.0
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/urfave/cli v1.22.1
 	github.com/valyala/fasthttp v1.26.0
+	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
 	google.golang.org/protobuf v1.27.1
