@@ -21,7 +21,7 @@ require (
 	google.golang.org/grpc v1.39.0
 	google.golang.org/grpc/examples v0.0.0-20210526223527-2de42fcbbce3 // indirect
 	google.golang.org/protobuf v1.27.1
-	mosn.io/api v0.0.0-20210414070543-8a0686b03540
+	mosn.io/api v0.0.0-20210714065837-5b4c2d66e70c
 	mosn.io/layotto/components v0.0.0-20210625065826-9c2ad8dbcf05
 	mosn.io/layotto/spec v0.0.0-20210707123820-584778d048d3
 	mosn.io/mosn v0.23.0
@@ -33,3 +33,5 @@ replace (
 	mosn.io/layotto/components => ./components
 	mosn.io/layotto/spec => ./spec
 )
+
+replace mosn.io/mosn v0.23.0 => ../mosn

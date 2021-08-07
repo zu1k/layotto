@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	v2 "mosn.io/mosn/pkg/config/v2"
 	"mosn.io/mosn/pkg/log"
 	"mosn.io/mosn/pkg/wasm"
 
@@ -14,7 +13,6 @@ import (
 
 var (
 	watcher     *fsnotify.Watcher
-	configs     = make(map[string]*filterConfig)
 	pluginNames = make(map[string]string)
 )
 
@@ -76,7 +74,6 @@ func addWatchFile(cfg *filterConfig, pluginName string) {
 		return
 	}
 
-	configs[path] = cfg
 	pluginNames[path] = pluginName
 	log.DefaultLogger.Infof("[proxywasm] [watcher] addWatchFile start to watch wasm file and its dir: %s", path)
 }
@@ -84,38 +81,15 @@ func addWatchFile(cfg *filterConfig, pluginName string) {
 func reloadWasm(fullPath string) {
 	found := false
 
-	for path, config := range configs {
+	for path, pluginName := range pluginNames {
 		if strings.HasSuffix(fullPath, path) {
 			found = true
-			pluginName := pluginNames[path]
 
-			err := wasm.GetWasmManager().UninstallWasmPluginByName(pluginName)
-			if err != nil {
-				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm fail to uninstall plugin, err: %v", err)
-			}
-
-			v2Config := v2.WasmPluginConfig{
-				PluginName:  pluginName,
-				VmConfig:    config.VmConfig,
-				InstanceNum: config.InstanceNum,
-			}
-			err = wasm.GetWasmManager().AddOrUpdateWasm(v2Config)
+			err := wasm.GetWasmManager().ReloadWasmByName(pluginName)
 			if err != nil {
 				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm fail to add plugin, err: %v", err)
 				return
 			}
-
-			pw := wasm.GetWasmManager().GetWasmPluginWrapperByName(pluginName)
-			if pw == nil {
-				log.DefaultLogger.Errorf("[proxywasm] [watcher] reloadWasm plugin not found")
-				return
-			}
-
-			factory := &FilterConfigFactory{
-				pluginName: pluginName,
-				config:     config,
-			}
-			pw.RegisterPluginHandler(factory)
 
 			log.DefaultLogger.Infof("[proxywasm] [watcher] reloadWasm reload wasm success: %s", path)
 		}
@@ -135,7 +109,7 @@ func fileExist(file string) bool {
 }
 
 func pathIsWasmFile(fullPath string) bool {
-	for path, _ := range configs {
+	for path, _ := range pluginNames {
 		if strings.HasSuffix(fullPath, path) {
 			return true
 		}
